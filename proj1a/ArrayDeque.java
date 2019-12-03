@@ -63,6 +63,13 @@ public class ArrayDeque<T> {
         return firstItem;
     }
 
+    public T get(int index) {
+        if ((index < 0) || (index > size - 1))
+            throw new IndexOutOfBoundsException("Cannot get item. Index must be greater than 0 and less than size");
+        int rotatedIndex = ((first + 1) + index) % capacity;
+        return items[rotatedIndex];
+    }
+
     private int increment(int i) {
         int newIndex = i+1;
         return newIndex < capacity ? newIndex : 0;
@@ -210,9 +217,41 @@ public class ArrayDeque<T> {
         System.out.println(passed ? "Success" : "Fail");
     }
 
+    public static void testGet() {
+        System.out.println("Testing get(index)");
+        boolean passed = true;
+        ArrayDeque<Integer> AD = new ArrayDeque<>();
+        AD.addFirst(0);
+        AD.addFirst(1);
+        AD.addLast(2);
+        AD.addLast(3);
+
+        /*
+         *      L     F      
+         * [2 3 - - - - 1 0 ] 
+         *
+         */
+
+        passed = AD.get(3) == 3 && passed;
+        passed = AD.get(2) == 2 && passed;
+        passed = AD.get(1) == 0 && passed;
+        passed = AD.get(0) == 1 && passed;
+
+        try {
+            AD.get(5);
+            passed = false;
+        } catch (IndexOutOfBoundsException err) {
+            // do nothing if catch error
+        }
+
+        System.out.println(passed ? "Success" : "Fail");
+    }
+
     public static void main(String[] args) {
         testGrow();
         testGrowAndShrink();
         testShrink_LastLessThanFirst();
+        testGet();
     }
 }
+
